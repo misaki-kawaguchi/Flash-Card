@@ -8,6 +8,17 @@ class CreateFlashcardPage extends StatefulWidget {
 }
 
 class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
+
+  // 名前編集欄用のコントローラー（フォームの値を管理）
+  final _nameController = TextEditingController();
+
+  // TextEditingControllerはウィジェット上での利用が終わったあとはリソースを解放してあげる必要がある
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,6 +33,7 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
               child: Column(
                 children: [
                   TextFormField(
+                    controller: _nameController,
                     decoration: const InputDecoration(
                       labelText: '名前',
                       hintText: '名前',
