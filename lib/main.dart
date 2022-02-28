@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flashcard/pages/home.dart';
+import 'routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      routes: routes,
     );
   }
 }
