@@ -10,6 +10,17 @@ class CreateFlashcardPage extends StatefulWidget {
 class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('単語帳を作成'),
+      ),
+      body: Column(
+        children: const <Widget>[
+          Text(
+            '新規登録画面',
+          ),
+        ],
+      ),
+    );
   }
 }
