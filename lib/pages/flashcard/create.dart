@@ -9,6 +9,9 @@ class CreateFlashcardPage extends StatefulWidget {
 
 class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
 
+  // フォームと連携させるためのGlobalKey
+  final _formKey = GlobalKey<FormState>();
+
   // 名前編集欄用のコントローラー（フォームの値を管理）
   final _nameController = TextEditingController();
 
@@ -30,6 +33,7 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
         child: Column(
           children: <Widget>[
             Form(
+              key: _formKey,
               child: Column(
                 children: [
                   TextFormField(
