@@ -1,3 +1,5 @@
+import 'package:flashcard/models/flashcard.dart';
+import 'package:flashcard/repositories/flashcard_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flashcard/routes.dart';
 
@@ -10,14 +12,33 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  // リスト一覧
+  List<Flashcard> _flashcards = [];
+
+  Future _loadFlashcards() async {
+    // 全てのデータを取得
+    final flashcards = await FlashcardRepository.all();
+    setState(() {
+      _flashcards = flashcards;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFlashcards();
+  }
+
   //新規登録ページに遷移
   Future _goToCreatePage() async {
     await Navigator.of(context).pushNamed(flashcardCreatePage);
+    await _loadFlashcards();
   }
 
   Widget _buildListRow(BuildContext context, int index) {
+    final flashcard = _flashcards[index];
     return ListTile(
-      title: const Text('タイトル'),
+      title: Text(flashcard.name),
     );
   }
 
@@ -41,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // index：何行目かを表す
               separatorBuilder: (BuildContext context, int index) => const Divider(),
               // リストの数
-              itemCount: 20,
+              itemCount: _flashcards.length,
             ),
           ),
         ],
