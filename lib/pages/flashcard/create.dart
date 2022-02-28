@@ -22,6 +22,16 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
     super.dispose();
   }
 
+  // 新規登録ボタンが押された時にバリデーションを働かせる
+  void _save() {
+    // フォーム内のバリデーションを実行する
+    // currentState!：nullではないことを表す
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    print('ok');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +63,7 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
                   Container(
                     margin: const EdgeInsets.all(20.0),
                     child: ElevatedButton(
-                      onPressed: () => print(_nameController.text),
+                      onPressed: _save,
                       child: const Text('登録'),
                     ),
                   ),
