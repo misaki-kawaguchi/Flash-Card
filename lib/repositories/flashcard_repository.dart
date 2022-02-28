@@ -15,4 +15,13 @@ class FlashcardRepository {
     final db = DatabaseService().db;
     return store().add(db, flashcard.toMap());
   }
+
+  // 保存したデータを取得する
+  static Future<List<Flashcard>> all() async {
+    final db = DatabaseService().db;
+    // store からデータの一覧を取得する
+    final records = await store().find(db);
+    //  IterableからList型に戻す
+    return records.map((record) => Flashcard.fromSnapshot(record)).toList();
+  }
 }
