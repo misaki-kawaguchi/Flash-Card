@@ -38,6 +38,13 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
                       labelText: '名前',
                       hintText: '名前',
                     ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return '入力してください';
+                      }
+                      // 入力値が正常な場合はnullを返す
+                      return null;
+                    },
                   ),
                   Container(
                     margin: const EdgeInsets.all(20.0),
