@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flashcard/pages/home.dart';
-import 'routes.dart';
+import 'package:flashcard/routes.dart';
 
 void main() {
   runApp(const MyApp());

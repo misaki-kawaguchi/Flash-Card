@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flashcard/routes.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -8,6 +9,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  //新規登録ページに遷移
+  Future _goToCreatePage() async {
+    await Navigator.of(context).pushNamed(flashcardCreatePage);
+  }
 
   Widget _buildListRow(BuildContext context, int index) {
     return ListTile(
@@ -41,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => print('pressed'),
+        onPressed: _goToCreatePage,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
