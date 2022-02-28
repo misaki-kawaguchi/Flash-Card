@@ -1,3 +1,5 @@
+import 'package:flashcard/models/flashcard.dart';
+import 'package:flashcard/repositories/flashcard_repository.dart';
 import 'package:flutter/material.dart';
 
 class CreateFlashcardPage extends StatefulWidget {
@@ -23,13 +25,20 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
   }
 
   // 新規登録ボタンが押された時にバリデーションを働かせる
-  void _save() {
+  Future _save() async {
     // フォーム内のバリデーションを実行する
     // currentState!：nullではないことを表す
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    print('ok');
+
+    // Flashcardモデルのインスタンスを作成
+    final flashcard = Flashcard(name: _nameController.text);
+    // データを保存
+    await FlashcardRepository.add(flashcard);
+
+    // 前の画面に戻る
+    Navigator.of(context).pop();
   }
 
   @override
