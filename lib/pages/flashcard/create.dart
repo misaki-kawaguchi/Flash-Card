@@ -14,12 +14,24 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
       appBar: AppBar(
         title: const Text('単語帳を作成'),
       ),
-      body: Column(
-        children: const <Widget>[
-          Text(
-            '新規登録画面',
-          ),
-        ],
+      body: Container(
+        margin: const EdgeInsets.all(20.0),
+        child: Column(
+          children: <Widget>[
+            Form(
+              child: Column(
+                children: [
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: '名前',
+                      hintText: '名前',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
