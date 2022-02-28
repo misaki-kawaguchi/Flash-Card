@@ -39,6 +39,13 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
                       hintText: '名前',
                     ),
                   ),
+                  Container(
+                    margin: const EdgeInsets.all(20.0),
+                    child: ElevatedButton(
+                      onPressed: () => print(_nameController.text),
+                      child: const Text('登録'),
+                    ),
+                  ),
                 ],
               ),
             ),
