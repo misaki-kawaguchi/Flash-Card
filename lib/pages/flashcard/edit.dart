@@ -1,10 +1,16 @@
 import 'package:flashcard/models/flashcard.dart';
 import 'package:flashcard/repositories/flashcard_repository.dart';
+import 'package:flashcard/routes.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_form.dart';
 import 'package:flutter/material.dart';
 
 class EditFlashcardPage extends StatefulWidget {
   const EditFlashcardPage({Key? key}) : super(key: key);
+
+  // 編集用の単語帳データをargumentパラメータを指定してプロパティで受け取る
+  static Future push(BuildContext context, Flashcard flashcard) async {
+    return Navigator.of(context).pushNamed(flashcardEditPage, arguments: flashcard);
+  }
 
   @override
   _EditFlashcardPageState createState() => _EditFlashcardPageState();
