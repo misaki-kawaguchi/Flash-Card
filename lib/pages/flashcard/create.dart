@@ -18,13 +18,6 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
   // 名前編集欄用のコントローラー（フォームの値を管理）
   final _nameController = TextEditingController();
 
-  // TextEditingControllerはウィジェット上での利用が終わったあとはリソースを解放してあげる必要がある
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
-  }
-
   // 新規登録ボタンが押された時にバリデーションを働かせる
   Future _save() async {
     // フォーム内のバリデーションを実行する
@@ -71,5 +64,12 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
         ),
       ),
     );
+  }
+
+  // TextEditingControllerはウィジェット上での利用が終わったあとはリソースを解放してあげる必要がある
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
   }
 }
