@@ -1,5 +1,6 @@
 import 'package:flashcard/models/flashcard.dart';
 import 'package:flashcard/repositories/flashcard_repository.dart';
+import 'package:flashcard/widgets/flashcard/flashcard_form.dart';
 import 'package:flutter/material.dart';
 
 class CreateFlashcardPage extends StatefulWidget {
@@ -55,20 +56,7 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
               key: _formKey,
               child: Column(
                 children: [
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: '名前',
-                      hintText: '名前',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return '入力してください';
-                      }
-                      // 入力値が正常な場合はnullを返す
-                      return null;
-                    },
-                  ),
+                  FlashcardForm(nameController: _nameController),
                   Container(
                     margin: const EdgeInsets.all(20.0),
                     child: ElevatedButton(
