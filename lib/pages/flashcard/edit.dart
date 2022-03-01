@@ -1,4 +1,6 @@
 import 'package:flashcard/models/flashcard.dart';
+import 'package:flashcard/models/flashcard_card.dart';
+import 'package:flashcard/repositories/flashcard_card_repository.dart';
 import 'package:flashcard/repositories/flashcard_repository.dart';
 import 'package:flashcard/routes.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_card_form.dart';
@@ -63,6 +65,19 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  // カードを追加
+  Future _addCard(String question, String answer) async {
+    final flashcardCard = FlashcardCard(
+      flashcardId: _flashcard.id!,
+      question: question,
+      answer: answer,
+    );
+
+    await FlashcardCardRepository.add(flashcardCard);
+
+    print((await FlashcardCardRepository.all()).length);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +108,7 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
                         style: Theme.of(context).textTheme.headline6,
                       ),
                     ),
-                    FlashcardCardForm(),
+                    FlashcardCardForm(onSave: _addCard),
                   ],
                 ),
               ),

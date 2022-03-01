@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class FlashcardCardForm extends StatelessWidget {
-  FlashcardCardForm({Key? key}) : super(key: key);
+  FlashcardCardForm({Key? key, required this.onSave}) : super(key: key);
+
+  // 質問と回答を保存する
+  final void Function(String question, String answer) onSave;
 
   // フォームと連携させるためのGlobalKey
   final _formKey = GlobalKey<FormState>();
@@ -13,7 +16,19 @@ class FlashcardCardForm extends StatelessWidget {
   final _answerController = TextEditingController();
 
   // 保存する
-  Future _save() async {}
+  Future _save() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    onSave(
+      _questionController.text,
+      _answerController.text,
+    );
+
+    _questionController.text = '';
+    _answerController.text = '';
+  }
 
   @override
   Widget build(BuildContext context) {
