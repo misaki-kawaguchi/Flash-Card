@@ -24,4 +24,12 @@ class FlashcardRepository {
     //  IterableからList型に戻す
     return records.map((record) => Flashcard.fromSnapshot(record)).toList();
   }
+
+  // データを更新する
+  static Future update(Flashcard flashcard) async {
+    final db = DatabaseService().db;
+    // recordにIDを指定してupdateを実行する
+    // 編集画面からしか呼ばれないので必ずidが入っている前提としてビックリマークをつける
+    return store().record(flashcard.id!).update(db, flashcard.toMap());
+  }
 }
