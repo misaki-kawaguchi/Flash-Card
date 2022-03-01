@@ -1,4 +1,5 @@
 import 'package:flashcard/models/flashcard.dart';
+import 'package:flashcard/pages/flashcard/edit.dart';
 import 'package:flashcard/repositories/flashcard_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flashcard/routes.dart';
@@ -35,10 +36,17 @@ class _MyHomePageState extends State<MyHomePage> {
     await _loadFlashcards();
   }
 
+  // 編集ページに遷移
+  Future _goToEditPage(Flashcard flashcard) async {
+    await EditFlashcardPage.push(context, flashcard);
+    await _loadFlashcards();
+  }
+
   Widget _buildListRow(BuildContext context, int index) {
     final flashcard = _flashcards[index];
     return ListTile(
       title: Text(flashcard.name),
+      onTap: () => _goToEditPage(flashcard),
     );
   }
 

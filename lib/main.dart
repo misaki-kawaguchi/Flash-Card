@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flashcard/routes.dart';
 import 'package:flashcard/services/database_service.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future main() async {
   // まだデータベースファイルを保存するためのフォルダの位置を取得するための初期化などがFlutterエンジン側でできていないので完了した状態にする
@@ -20,6 +21,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale("ja", "JP"),
+      ],
       routes: routes,
     );
   }

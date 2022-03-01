@@ -1,16 +1,22 @@
 import 'package:flashcard/models/flashcard.dart';
 import 'package:flashcard/repositories/flashcard_repository.dart';
+import 'package:flashcard/routes.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_form.dart';
 import 'package:flutter/material.dart';
 
-class CreateFlashcardPage extends StatefulWidget {
-  const CreateFlashcardPage({Key? key}) : super(key: key);
+class EditFlashcardPage extends StatefulWidget {
+  const EditFlashcardPage({Key? key}) : super(key: key);
+
+  // 編集用の単語帳データをargumentパラメータを指定してプロパティで受け取る
+  static Future push(BuildContext context, Flashcard flashcard) async {
+    return Navigator.of(context).pushNamed(flashcardEditPage, arguments: flashcard);
+  }
 
   @override
-  _CreateFlashcardPageState createState() => _CreateFlashcardPageState();
+  _EditFlashcardPageState createState() => _EditFlashcardPageState();
 }
 
-class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
+class _EditFlashcardPageState extends State<EditFlashcardPage> {
 
   // フォームと連携させるためのGlobalKey
   final _formKey = GlobalKey<FormState>();
@@ -18,7 +24,28 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
   // 名前編集欄用のコントローラー（フォームの値を管理）
   final _nameController = TextEditingController();
 
-  // 新規登録ボタンが押された時にバリデーションを働かせる
+  late Flashcard _flashcard;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 諸々の準備が終わった後に初期化する
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      // パラメータを読み込む
+      final flashcard = ModalRoute.of(context)!.settings.arguments as Flashcard;
+
+      // 作成した名前を代入
+      _nameController.text = flashcard.name;
+
+      // _flashcardに反映
+      setState(() {
+        _flashcard = flashcard;
+      });
+    });
+  }
+
+  // 更新ボタンが押された時にバリデーションを働かせる
   Future _save() async {
     // フォーム内のバリデーションを実行する
     // currentState!：nullではないことを表す
@@ -26,20 +53,20 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
       return;
     }
 
-    // Flashcardモデルのインスタンスを作成
-    final flashcard = Flashcard(name: _nameController.text);
-    // データを保存
-    await FlashcardRepository.add(flashcard);
+    // 名前を更新する
+    _flashcard.name = _nameController.text;
+    await FlashcardRepository.update(_flashcard);
 
-    // 前の画面に戻る
-    Navigator.of(context).pop();
+    // 完了メッセージを表示
+    const snackBar = SnackBar(content: Text('名前を更新しました。'));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('単語帳を作成'),
+        title: const Text('単語帳を編集'),
       ),
       body: Container(
         margin: const EdgeInsets.all(20.0),
@@ -54,7 +81,7 @@ class _CreateFlashcardPageState extends State<CreateFlashcardPage> {
                     margin: const EdgeInsets.all(20.0),
                     child: ElevatedButton(
                       onPressed: _save,
-                      child: const Text('登録'),
+                      child: const Text('更新'),
                     ),
                   ),
                 ],
