@@ -45,7 +45,7 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
     });
   }
 
-  // 新規登録ボタンが押された時にバリデーションを働かせる
+  // 更新ボタンが押された時にバリデーションを働かせる
   Future _save() async {
     // フォーム内のバリデーションを実行する
     // currentState!：nullではないことを表す
@@ -53,13 +53,13 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
       return;
     }
 
-    // Flashcardモデルのインスタンスを作成
-    final flashcard = Flashcard(name: _nameController.text);
-    // データを保存
-    await FlashcardRepository.add(flashcard);
+    // 名前を更新する
+    _flashcard.name = _nameController.text;
+    await FlashcardRepository.update(_flashcard);
 
-    // 前の画面に戻る
-    Navigator.of(context).pop();
+    // 完了メッセージを表示
+    const snackBar = SnackBar(content: Text('名前を更新しました。'));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
