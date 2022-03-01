@@ -24,6 +24,27 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
   // 名前編集欄用のコントローラー（フォームの値を管理）
   final _nameController = TextEditingController();
 
+  late Flashcard _flashcard;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 諸々の準備が終わった後に初期化する
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      // パラメータを読み込む
+      final flashcard = ModalRoute.of(context)!.settings.arguments as Flashcard;
+
+      // 作成した名前を代入
+      _nameController.text = flashcard.name;
+
+      // _flashcardに反映
+      setState(() {
+        _flashcard = flashcard;
+      });
+    });
+  }
+
   // 新規登録ボタンが押された時にバリデーションを働かせる
   Future _save() async {
     // フォーム内のバリデーションを実行する
