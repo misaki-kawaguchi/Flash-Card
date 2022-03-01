@@ -1,6 +1,7 @@
 import 'package:flashcard/models/flashcard.dart';
 import 'package:flashcard/repositories/flashcard_repository.dart';
 import 'package:flashcard/routes.dart';
+import 'package:flashcard/widgets/flashcard/flashcard_card_form.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_form.dart';
 import 'package:flutter/material.dart';
 
@@ -78,12 +79,20 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
                 children: [
                   FlashcardForm(nameController: _nameController),
                   Container(
-                    margin: const EdgeInsets.all(20.0),
+                    margin: const EdgeInsets.only(top: 20.0),
                     child: ElevatedButton(
                       onPressed: _save,
                       child: const Text('更新'),
                     ),
                   ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 20.0),
+                    child: Text(
+                      'カードを追加',
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                  ),
+                  FlashcardCardForm(),
                 ],
               ),
             ),
