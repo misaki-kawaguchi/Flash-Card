@@ -1,6 +1,9 @@
 import 'package:flashcard/models/flashcard.dart';
+import 'package:flashcard/models/flashcard_card.dart';
+import 'package:flashcard/repositories/flashcard_card_repository.dart';
 import 'package:flashcard/repositories/flashcard_repository.dart';
 import 'package:flashcard/routes.dart';
+import 'package:flashcard/widgets/flashcard/flashcard_card_form.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_form.dart';
 import 'package:flutter/material.dart';
 
@@ -62,32 +65,55 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  // カードを追加
+  Future _addCard(String question, String answer) async {
+    final flashcardCard = FlashcardCard(
+      flashcardId: _flashcard.id!,
+      question: question,
+      answer: answer,
+    );
+
+    await FlashcardCardRepository.add(flashcardCard);
+
+    print((await FlashcardCardRepository.all()).length);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('単語帳を編集'),
       ),
-      body: Container(
-        margin: const EdgeInsets.all(20.0),
-        child: Column(
-          children: <Widget>[
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  FlashcardForm(nameController: _nameController),
-                  Container(
-                    margin: const EdgeInsets.all(20.0),
-                    child: ElevatedButton(
-                      onPressed: _save,
-                      child: const Text('更新'),
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.all(20.0),
+          child: Column(
+            children: <Widget>[
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    FlashcardForm(nameController: _nameController),
+                    Container(
+                      margin: const EdgeInsets.only(top: 20.0),
+                      child: ElevatedButton(
+                        onPressed: _save,
+                        child: const Text('更新'),
+                      ),
                     ),
-                  ),
-                ],
+                    Container(
+                      margin: const EdgeInsets.only(top: 20.0),
+                      child: Text(
+                        'カードを追加',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                    ),
+                    FlashcardCardForm(onSave: _addCard),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
