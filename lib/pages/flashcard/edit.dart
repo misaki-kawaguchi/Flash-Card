@@ -1,8 +1,10 @@
 import 'package:flashcard/models/flashcard.dart';
 import 'package:flashcard/models/flashcard_card.dart';
 import 'package:flashcard/repositories/flashcard_card_repository.dart';
+import 'package:flashcard/repositories/flashcard_repository.dart';
 import 'package:flashcard/routes.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_card_form.dart';
+import 'package:flashcard/widgets/flashcard/flashcard_edit_dialog.dart';
 import 'package:flutter/material.dart';
 
 class EditFlashcardPage extends StatefulWidget {
@@ -50,11 +52,35 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
     print((await FlashcardCardRepository.all()).length);
   }
 
+  // ダイアログを表示
+  Future _showEditDialog() async {
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return FlashcardEditDialog(flashcard: _flashcard);
+      });
+    if (newName == null) {
+      return;
+    }
+
+    setState(() {
+      _flashcard.name = newName;
+    });
+
+    await FlashcardRepository.update(_flashcard);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('単語帳を編集'),
+        title: Text(_flashcard.name),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: _showEditDialog,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(
