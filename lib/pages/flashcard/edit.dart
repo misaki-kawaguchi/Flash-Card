@@ -4,6 +4,7 @@ import 'package:flashcard/repositories/flashcard_card_repository.dart';
 import 'package:flashcard/repositories/flashcard_repository.dart';
 import 'package:flashcard/routes.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_card_form.dart';
+import 'package:flashcard/widgets/flashcard/flashcard_card_list.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_edit_dialog.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,8 @@ class EditFlashcardPage extends StatefulWidget {
 
   // 編集用の単語帳データをargumentパラメータを指定してプロパティで受け取る
   static Future push(BuildContext context, Flashcard flashcard) async {
-    return Navigator.of(context).pushNamed(flashcardEditPage, arguments: flashcard);
+    return Navigator.of(context)
+        .pushNamed(flashcardEditPage, arguments: flashcard);
   }
 
   @override
@@ -20,15 +22,15 @@ class EditFlashcardPage extends StatefulWidget {
 }
 
 class _EditFlashcardPageState extends State<EditFlashcardPage> {
-
   Flashcard? _flashcard;
+  List<FlashcardCard> _flashcardCards = [];
 
   @override
   void initState() {
     super.initState();
 
     // 諸々の準備が終わった後に初期化する
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       // パラメータを読み込む
       final flashcard = ModalRoute.of(context)!.settings.arguments as Flashcard;
 
@@ -36,6 +38,18 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
       setState(() {
         _flashcard = flashcard;
       });
+
+      await _loadFlashcardCards();
+    });
+  }
+
+  // カードを表示
+  Future _loadFlashcardCards() async {
+    final flashcardCards =
+        await FlashcardCardRepository.findByFlashcardId(_flashcard!.id!);
+
+    setState(() {
+      _flashcardCards = flashcardCards;
     });
   }
 
@@ -48,17 +62,16 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
     );
 
     await FlashcardCardRepository.add(flashcardCard);
-
-    print((await FlashcardCardRepository.all()).length);
+    await _loadFlashcardCards();
   }
 
   // ダイアログを表示
   Future _showEditDialog() async {
     final newName = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return FlashcardEditDialog(flashcard: _flashcard!);
-      });
+        context: context,
+        builder: (context) {
+          return FlashcardEditDialog(flashcard: _flashcard!);
+        });
     if (newName == null) {
       return;
     }
@@ -82,14 +95,17 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: const EdgeInsets.all(20.0),
-          child: Column(
-            children: <Widget>[
-              FlashcardCardForm(onSave: _addCard),
-            ],
-          ),
+      body: Container(
+        margin: const EdgeInsets.all(20.0),
+        child: Column(
+          children: <Widget>[
+            FlashcardCardForm(onSave: _addCard),
+            Expanded(
+              child: FlashcardCardList(
+                flashcardCards: _flashcardCards,
+              ),
+            ),
+          ],
         ),
       ),
     );
