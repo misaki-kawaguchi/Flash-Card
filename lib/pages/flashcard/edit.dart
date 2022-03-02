@@ -1,10 +1,8 @@
 import 'package:flashcard/models/flashcard.dart';
 import 'package:flashcard/models/flashcard_card.dart';
 import 'package:flashcard/repositories/flashcard_card_repository.dart';
-import 'package:flashcard/repositories/flashcard_repository.dart';
 import 'package:flashcard/routes.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_card_form.dart';
-import 'package:flashcard/widgets/flashcard/flashcard_form.dart';
 import 'package:flutter/material.dart';
 
 class EditFlashcardPage extends StatefulWidget {
@@ -21,12 +19,6 @@ class EditFlashcardPage extends StatefulWidget {
 
 class _EditFlashcardPageState extends State<EditFlashcardPage> {
 
-  // フォームと連携させるためのGlobalKey
-  final _formKey = GlobalKey<FormState>();
-
-  // 名前編集欄用のコントローラー（フォームの値を管理）
-  final _nameController = TextEditingController();
-
   late Flashcard _flashcard;
 
   @override
@@ -38,31 +30,11 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
       // パラメータを読み込む
       final flashcard = ModalRoute.of(context)!.settings.arguments as Flashcard;
 
-      // 作成した名前を代入
-      _nameController.text = flashcard.name;
-
       // _flashcardに反映
       setState(() {
         _flashcard = flashcard;
       });
     });
-  }
-
-  // 更新ボタンが押された時にバリデーションを働かせる
-  Future _save() async {
-    // フォーム内のバリデーションを実行する
-    // currentState!：nullではないことを表す
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    // 名前を更新する
-    _flashcard.name = _nameController.text;
-    await FlashcardRepository.update(_flashcard);
-
-    // 完了メッセージを表示
-    const snackBar = SnackBar(content: Text('名前を更新しました。'));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   // カードを追加
@@ -89,29 +61,7 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
           margin: const EdgeInsets.all(20.0),
           child: Column(
             children: <Widget>[
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    FlashcardForm(nameController: _nameController),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20.0),
-                      child: ElevatedButton(
-                        onPressed: _save,
-                        child: const Text('更新'),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20.0),
-                      child: Text(
-                        'カードを追加',
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                    ),
-                    FlashcardCardForm(onSave: _addCard),
-                  ],
-                ),
-              ),
+              FlashcardCardForm(onSave: _addCard),
             ],
           ),
         ),
@@ -122,7 +72,6 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
   // TextEditingControllerはウィジェット上での利用が終わったあとはリソースを解放してあげる必要がある
   @override
   void dispose() {
-    _nameController.dispose();
     super.dispose();
   }
 }
