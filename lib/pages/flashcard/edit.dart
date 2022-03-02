@@ -21,7 +21,7 @@ class EditFlashcardPage extends StatefulWidget {
 
 class _EditFlashcardPageState extends State<EditFlashcardPage> {
 
-  late Flashcard _flashcard;
+  Flashcard? _flashcard;
 
   @override
   void initState() {
@@ -42,7 +42,7 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
   // カードを追加
   Future _addCard(String question, String answer) async {
     final flashcardCard = FlashcardCard(
-      flashcardId: _flashcard.id!,
+      flashcardId: _flashcard!.id!,
       question: question,
       answer: answer,
     );
@@ -57,24 +57,24 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
     final newName = await showDialog<String>(
       context: context,
       builder: (context) {
-        return FlashcardEditDialog(flashcard: _flashcard);
+        return FlashcardEditDialog(flashcard: _flashcard!);
       });
     if (newName == null) {
       return;
     }
 
     setState(() {
-      _flashcard.name = newName;
+      _flashcard!.name = newName;
     });
 
-    await FlashcardRepository.update(_flashcard);
+    await FlashcardRepository.update(_flashcard!);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_flashcard.name),
+        title: Text(_flashcard?.name ?? ''),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
