@@ -4,7 +4,8 @@ import 'package:flashcard/repositories/flashcard_card_repository.dart';
 import 'package:flashcard/repositories/flashcard_repository.dart';
 import 'package:flashcard/routes.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_card_form.dart';
-import 'package:flashcard/widgets/flashcard/flashcard_form.dart';
+import 'package:flashcard/widgets/flashcard/flashcard_card_list.dart';
+import 'package:flashcard/widgets/flashcard/flashcard_edit_dialog.dart';
 import 'package:flutter/material.dart';
 
 class EditFlashcardPage extends StatefulWidget {
@@ -12,7 +13,8 @@ class EditFlashcardPage extends StatefulWidget {
 
   // 編集用の単語帳データをargumentパラメータを指定してプロパティで受け取る
   static Future push(BuildContext context, Flashcard flashcard) async {
-    return Navigator.of(context).pushNamed(flashcardEditPage, arguments: flashcard);
+    return Navigator.of(context)
+        .pushNamed(flashcardEditPage, arguments: flashcard);
   }
 
   @override
@@ -20,100 +22,90 @@ class EditFlashcardPage extends StatefulWidget {
 }
 
 class _EditFlashcardPageState extends State<EditFlashcardPage> {
-
-  // フォームと連携させるためのGlobalKey
-  final _formKey = GlobalKey<FormState>();
-
-  // 名前編集欄用のコントローラー（フォームの値を管理）
-  final _nameController = TextEditingController();
-
-  late Flashcard _flashcard;
+  Flashcard? _flashcard;
+  List<FlashcardCard> _flashcardCards = [];
 
   @override
   void initState() {
     super.initState();
 
     // 諸々の準備が終わった後に初期化する
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       // パラメータを読み込む
       final flashcard = ModalRoute.of(context)!.settings.arguments as Flashcard;
-
-      // 作成した名前を代入
-      _nameController.text = flashcard.name;
 
       // _flashcardに反映
       setState(() {
         _flashcard = flashcard;
       });
+
+      await _loadFlashcardCards();
     });
   }
 
-  // 更新ボタンが押された時にバリデーションを働かせる
-  Future _save() async {
-    // フォーム内のバリデーションを実行する
-    // currentState!：nullではないことを表す
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+  // カードを表示
+  Future _loadFlashcardCards() async {
+    final flashcardCards =
+        await FlashcardCardRepository.findByFlashcardId(_flashcard!.id!);
 
-    // 名前を更新する
-    _flashcard.name = _nameController.text;
-    await FlashcardRepository.update(_flashcard);
-
-    // 完了メッセージを表示
-    const snackBar = SnackBar(content: Text('名前を更新しました。'));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    setState(() {
+      _flashcardCards = flashcardCards;
+    });
   }
 
   // カードを追加
   Future _addCard(String question, String answer) async {
     final flashcardCard = FlashcardCard(
-      flashcardId: _flashcard.id!,
+      flashcardId: _flashcard!.id!,
       question: question,
       answer: answer,
     );
 
     await FlashcardCardRepository.add(flashcardCard);
+    await _loadFlashcardCards();
+  }
 
-    print((await FlashcardCardRepository.all()).length);
+  // ダイアログを表示
+  Future _showEditDialog() async {
+    final newName = await showDialog<String>(
+        context: context,
+        builder: (context) {
+          return FlashcardEditDialog(flashcard: _flashcard!);
+        });
+    if (newName == null) {
+      return;
+    }
+
+    setState(() {
+      _flashcard!.name = newName;
+    });
+
+    await FlashcardRepository.update(_flashcard!);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('単語帳を編集'),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: const EdgeInsets.all(20.0),
-          child: Column(
-            children: <Widget>[
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    FlashcardForm(nameController: _nameController),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20.0),
-                      child: ElevatedButton(
-                        onPressed: _save,
-                        child: const Text('更新'),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20.0),
-                      child: Text(
-                        'カードを追加',
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                    ),
-                    FlashcardCardForm(onSave: _addCard),
-                  ],
-                ),
-              ),
-            ],
+        title: Text(_flashcard?.name ?? ''),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: _showEditDialog,
           ),
+        ],
+      ),
+      body: Container(
+        margin: const EdgeInsets.all(20.0),
+        child: Column(
+          children: <Widget>[
+            FlashcardCardForm(onSave: _addCard),
+            Expanded(
+              child: FlashcardCardList(
+                flashcardCards: _flashcardCards,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -122,7 +114,6 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
   // TextEditingControllerはウィジェット上での利用が終わったあとはリソースを解放してあげる必要がある
   @override
   void dispose() {
-    _nameController.dispose();
     super.dispose();
   }
 }

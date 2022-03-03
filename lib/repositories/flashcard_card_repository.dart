@@ -17,10 +17,15 @@ class FlashcardCardRepository {
   }
 
   // 保存したデータを取得する
-  static Future<List<FlashcardCard>> all() async {
+  static Future<List<FlashcardCard>> findByFlashcardId(int flashcardId) async {
     final db = DatabaseService().db;
     // store からデータの一覧を取得する
-    final records = await store().find(db);
+    final records = await store().find(
+      db,
+      finder: Finder(
+        filter: Filter.equals('flashcardId', flashcardId),
+      ),
+    );
     //  IterableからList型に戻す
     return records.map((record) => FlashcardCard.fromSnapshot(record)).toList();
   }
