@@ -64,6 +64,24 @@ class _FlashcardPlayPageState extends State<FlashcardPlayPage> {
     );
   }
 
+  // タップされた時の処理
+  void _next() {
+    if (_isQuestion) {
+      setState(() {
+        _isQuestion = false;
+      });
+      return;
+    }
+
+    if (_index == _flashcardCards.length - 1) {
+      return;
+    }
+
+    setState(() {
+      _isQuestion = true;
+      _index++;
+    });
+  }
 
   Flashcard _getFlashcard() {
     return ModalRoute.of(context)!.settings.arguments as Flashcard;
@@ -77,19 +95,23 @@ class _FlashcardPlayPageState extends State<FlashcardPlayPage> {
       appBar: AppBar(
         title: Text(flashcard.name),
       ),
-      body: Container(
-        child: Center(
-          child: Container(
-            margin: const EdgeInsets.all(20),
-            child: AspectRatio(
-              aspectRatio: 512 / 200,
-              child: Stack(
-                children: [
-                  Image.asset('assets/images/card.png'),
-                  Positioned.fill(
-                    child: Center(child: _buildCardContainer()),
-                  ),
-                ],
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _next,
+        child: Container(
+          child: Center(
+            child: Container(
+              margin: const EdgeInsets.all(20),
+              child: AspectRatio(
+                aspectRatio: 512 / 200,
+                child: Stack(
+                  children: [
+                    Image.asset('assets/images/card.png'),
+                    Positioned.fill(
+                      child: Center(child: _buildCardContainer()),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
