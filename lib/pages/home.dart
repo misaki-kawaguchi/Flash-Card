@@ -46,7 +46,19 @@ class _MyHomePageState extends State<MyHomePage> {
     final flashcard = _flashcards[index];
     return ListTile(
       title: Text(flashcard.name),
-      onTap: () => _goToEditPage(flashcard),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.play_arrow),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () => _goToEditPage(flashcard),
+          ),
+        ],
+      ),
     );
   }
 
