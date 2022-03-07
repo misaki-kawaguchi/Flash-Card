@@ -37,4 +37,10 @@ class FlashcardCardRepository {
     // 編集画面からしか呼ばれないので必ずidが入っている前提としてビックリマークをつける
     return store().record(flashcardCard.id!).update(db, flashcardCard.toMap());
   }
+
+  // データを削除する
+  static Future delete(int id) async {
+    final db = DatabaseService().db;
+    await store().record(id).delete(db);
+  }
 }

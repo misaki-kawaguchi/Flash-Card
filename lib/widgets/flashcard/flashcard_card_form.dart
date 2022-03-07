@@ -1,7 +1,16 @@
+import 'package:flashcard/models/flashcard_card.dart';
 import 'package:flutter/material.dart';
 
 class FlashcardCardForm extends StatelessWidget {
-  FlashcardCardForm({Key? key, required this.onSave}) : super(key: key);
+  FlashcardCardForm(
+      {Key? key,
+      required this.onSave,
+      this.buttonText = 'カードを追加',
+      FlashcardCard? flashcardCard})
+      : _questionController =
+            TextEditingController(text: flashcardCard?.question ?? ''),
+        _answerController = TextEditingController(text: flashcardCard?.answer ?? ''),
+        super(key: key);
 
   // 質問と回答を保存する
   final void Function(String question, String answer) onSave;
@@ -10,10 +19,13 @@ class FlashcardCardForm extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 
   // 質問用のコントローラー（フォームの値を管理）
-  final _questionController = TextEditingController();
+  final TextEditingController _questionController;
 
   // 回答用のコントローラー（フォームの値を管理）
-  final _answerController = TextEditingController();
+  final TextEditingController _answerController;
+
+  // テキストを初期化
+  final String buttonText;
 
   // 保存する
   Future _save() async {
@@ -66,7 +78,7 @@ class FlashcardCardForm extends StatelessWidget {
             margin: const EdgeInsets.only(top: 20.0),
             child: ElevatedButton(
               onPressed: _save,
-              child: const Text('カードを追加'),
+              child: Text(buttonText),
             ),
           ),
         ],
