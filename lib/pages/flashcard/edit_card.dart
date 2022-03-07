@@ -1,5 +1,6 @@
 import 'package:flashcard/models/flashcard_card.dart';
 import 'package:flashcard/repositories/flashcard_card_repository.dart';
+import 'package:flashcard/utils/dialogs.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_card_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flashcard/routes.dart';
@@ -31,7 +32,14 @@ class EditFlashcardCardPage extends StatelessWidget {
     }
 
     // 削除する
-    Future delete() async {}
+    Future delete() async {
+      if (!await Dialogs.confirm(context, '削除', '削除してよろしいですか？')) {
+        return;
+      }
+
+      await FlashcardCardRepository.delete(getFlashcardCard().id!);
+      Navigator.of(context).pop();
+    }
 
     final flashcardCard = getFlashcardCard();
 
