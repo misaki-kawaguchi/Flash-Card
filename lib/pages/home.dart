@@ -4,6 +4,8 @@ import 'package:flashcard/repositories/flashcard_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flashcard/routes.dart';
 
+import 'flashcard/play.dart';
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
@@ -46,7 +48,22 @@ class _MyHomePageState extends State<MyHomePage> {
     final flashcard = _flashcards[index];
     return ListTile(
       title: Text(flashcard.name),
-      onTap: () => _goToEditPage(flashcard),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.play_arrow),
+            onPressed: () => FlashcardPlayPage.push(
+              context,
+              flashcard,
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () => _goToEditPage(flashcard),
+          ),
+        ],
+      ),
     );
   }
 
