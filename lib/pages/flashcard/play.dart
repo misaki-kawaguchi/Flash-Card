@@ -4,6 +4,14 @@ import 'package:flashcard/repositories/flashcard_card_repository.dart';
 import 'package:flashcard/routes.dart';
 import 'package:flutter/material.dart';
 
+enum AnimationType {
+  none,
+  flipIn,
+  flipOut,
+  appear,
+  disappear,
+}
+
 class FlashcardPlayPage extends StatefulWidget {
   const FlashcardPlayPage({Key? key}) : super(key: key);
 
@@ -19,6 +27,49 @@ class FlashcardPlayPage extends StatefulWidget {
 }
 
 class _FlashcardPlayPageState extends State<FlashcardPlayPage> {
+
+  AnimationType _animationType = AnimationType.none;
+
+  double _getAnimationWidth() {
+    if (_animationType == AnimationType.flipOut) {
+      return 1;
+    }
+    return MediaQuery.of(context).size.width - margin * 2;
+  }
+
+  Widget _buildCard() {
+    return AspectRatio(
+      aspectRatio: 512 / 200,
+      child: Stack(
+        children: [
+          Image.asset('assets/images/card.png'),
+          Positioned.fill(
+            child: Center(child: _buildCardContainer()),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCardWithAnimation() {
+    if (_flashcardCards.isEmpty) {
+      return Container();
+    }
+
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: animationDuration),
+      opacity: _animationType == AnimationType.disappear ? 0 : 1,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: animationDuration),
+        width: _getAnimationWidth(),
+        curve: Curves.fastOutSlowIn,
+        child: _buildCard(),
+      ),
+    );
+  }
+
+  static const int animationDuration = 200;
+  static const double margin = 20;
 
   List<FlashcardCard> _flashcardCards = [];
   // 現在何枚目のカードであるか
@@ -65,10 +116,19 @@ class _FlashcardPlayPageState extends State<FlashcardPlayPage> {
   }
 
   // タップされた時の処理
-  void _next() {
+  Future _next() async {
     if (_isQuestion) {
       setState(() {
+        _animationType = AnimationType.flipOut;
+      });
+      await Future.delayed(const Duration(milliseconds: animationDuration));
+      setState(() {
         _isQuestion = false;
+        _animationType = AnimationType.flipIn;
+      });
+      await Future.delayed(const Duration(milliseconds: animationDuration));
+      setState(() {
+        _animationType = AnimationType.none;
       });
       return;
     }
@@ -78,8 +138,19 @@ class _FlashcardPlayPageState extends State<FlashcardPlayPage> {
     }
 
     setState(() {
+      _animationType = AnimationType.disappear;
+    });
+    await Future.delayed(const Duration(milliseconds: 600));
+    setState(() {
       _isQuestion = true;
       _index++;
+    });
+    setState(() {
+      _animationType = AnimationType.appear;
+    });
+    await Future.delayed(const Duration(milliseconds: animationDuration));
+    setState(() {
+      _animationType = AnimationType.none;
     });
   }
 
@@ -101,18 +172,8 @@ class _FlashcardPlayPageState extends State<FlashcardPlayPage> {
         child: Container(
           child: Center(
             child: Container(
-              margin: const EdgeInsets.all(20),
-              child: AspectRatio(
-                aspectRatio: 512 / 200,
-                child: Stack(
-                  children: [
-                    Image.asset('assets/images/card.png'),
-                    Positioned.fill(
-                      child: Center(child: _buildCardContainer()),
-                    ),
-                  ],
-                ),
-              ),
+              margin: EdgeInsets.all(margin),
+              child: _buildCardWithAnimation(),
             ),
           ),
         ),
