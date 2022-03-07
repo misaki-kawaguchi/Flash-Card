@@ -1,4 +1,7 @@
 import 'package:flashcard/models/flashcard.dart';
+import 'package:flashcard/repositories/flashcard_card_repository.dart';
+import 'package:flashcard/repositories/flashcard_repository.dart';
+import 'package:flashcard/utils/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_form.dart';
 
@@ -41,6 +44,21 @@ class _FlashcardEditDialogState extends State<FlashcardEditDialog> {
     Navigator.of(context).pop(_nameController.text);
   }
 
+  // 削除する
+  Future _delete() async {
+    if (!await Dialogs.confirm(context, '削除', '削除してよろしいですか？')) {
+      return;
+    }
+
+    await FlashcardCardRepository.deleteByFlashcardId(widget.flashcard.id!);
+    await FlashcardRepository.delete(widget.flashcard.id!);
+
+    const snackBar = SnackBar(content: Text('削除しました'));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -52,6 +70,16 @@ class _FlashcardEditDialogState extends State<FlashcardEditDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             FlashcardForm(nameController: _nameController),
+            Container(
+              margin: const EdgeInsets.only(top: 20),
+              child: TextButton(
+                onPressed: _delete,
+                style: TextButton.styleFrom(
+                  primary: Theme.of(context).errorColor,
+                ),
+                child: const Text('削除'),
+              ),
+            ),
           ],
         ),
       ),
