@@ -43,4 +43,15 @@ class FlashcardCardRepository {
     final db = DatabaseService().db;
     await store().record(id).delete(db);
   }
+
+  // FlashcardCardRepositoryに指定した単語帳IDのカードだけを削除する
+  static Future deleteByFlashcardId(int flashcardId) async {
+    final db = DatabaseService().db;
+    await store().delete(
+      db,
+      finder: Finder(
+        filter: Filter.equals('flashcardId', flashcardId),
+      ),
+    );
+  }
 }
