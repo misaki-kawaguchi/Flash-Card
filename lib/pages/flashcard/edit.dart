@@ -103,6 +103,7 @@ class _EditFlashcardPageState extends State<EditFlashcardPage> {
             Expanded(
               child: FlashcardCardList(
                 flashcardCards: _flashcardCards,
+                onUpdate: _loadFlashcardCards,
               ),
             ),
           ],

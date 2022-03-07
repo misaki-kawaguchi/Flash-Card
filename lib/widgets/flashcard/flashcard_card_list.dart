@@ -6,9 +6,12 @@ class FlashcardCardList extends StatelessWidget {
   const FlashcardCardList({
     Key? key,
     required this.flashcardCards,
+    required this.onUpdate,
   }) : super(key: key);
 
   final List<FlashcardCard> flashcardCards;
+
+  final Function() onUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +19,7 @@ class FlashcardCardList extends StatelessWidget {
     // 編集ページに遷移する
     Future goToEdit(FlashcardCard flashcardCard) async {
       await EditFlashcardCardPage.push(context, flashcardCard);
+      onUpdate();
     }
 
     // カード一覧

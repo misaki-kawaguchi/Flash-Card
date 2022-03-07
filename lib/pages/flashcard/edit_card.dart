@@ -1,4 +1,5 @@
 import 'package:flashcard/models/flashcard_card.dart';
+import 'package:flashcard/repositories/flashcard_card_repository.dart';
 import 'package:flashcard/widgets/flashcard/flashcard_card_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flashcard/routes.dart';
@@ -20,7 +21,14 @@ class EditFlashcardCardPage extends StatelessWidget {
     }
 
     // 更新する
-    Future update(String question, String answer) async {}
+    Future update(String question, String answer) async {
+      final flashcardCard = getFlashcardCard()
+        ..question = question
+        ..answer = answer;
+      await FlashcardCardRepository.update(flashcardCard);
+
+      Navigator.of(context).pop();
+    }
 
     // 削除する
     Future delete() async {}
